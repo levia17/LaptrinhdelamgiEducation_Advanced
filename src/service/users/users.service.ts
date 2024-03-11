@@ -1,4 +1,4 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable, Param, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/typeorm/entites/user.entity';
 import { CreateUserParam, LoginUserParam } from 'src/ulti/type';
@@ -19,31 +19,9 @@ export class UsersService {
 
 
     createUser(userDetails: CreateUserParam) {
-        const username = userDetails.username;
-
-        const respone = this.userRepository.findOneBy({ username })
-            .then(data => {
-                if (data) {
-                    return { message: "Username is exist!" };
-                } else {
-                    const newUser = this.userRepository.create({ ...userDetails, createAt: new Date() });
-                    return (this.userRepository.save(newUser), { message: 'Register successfully!' });
-                }
-            })
-            .catch(err => console.log(err));
-
-        return respone;
-
-
+        const newUser = this.userRepository.create({ ...userDetails, createAt: new Date() });
+        return this.userRepository.save(newUser);
     };
-
-    loginUser(userDetails: LoginUserParam) {
-        const respone = this.userRepository.findOneBy(userDetails)
-            .then(data => data ? { message: 'Login successfully!' } : { message: 'Username is not exist!' })
-            .catch(err => console.log(err));
-        return respone;
-    }
-
 
     deleteUser(username: string) {
         return (this.userRepository.delete({ username }), { message: 'Username is deleted!' });

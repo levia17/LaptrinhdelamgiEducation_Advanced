@@ -1,13 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from 'src/dtos/users/CreateUser.dto';
 import { UsersService } from 'src/service/users/users.service';
 import { LoginUserDto } from 'src/dtos/users/LoginUser.dto';
+import { AuthService } from 'src/service/auth/auth.service';
+import { RolesGuard } from 'src/guard/roles.guard';
+import { Roles } from 'src/decorator/roles.decorator';
 
 
 @Controller('users')
 export class UsersController {
     constructor(
-        private userService: UsersService
+        private userService: UsersService,
+        private authService: AuthService
     ) { }
 
     @Get(':username') // Get one user
@@ -15,20 +19,22 @@ export class UsersController {
         return this.userService.getUserByUsername(username);
     }
 
+    @UseGuards(RolesGuard)
     @Get() // Get all users
+    @Roles('admin')
     getUsers() {
         return this.userService.getUsers()
     };
 
 
     @Post('register') // Register
-    createUser(@Body() createUserDto: CreateUserDto) {
-        return this.userService.createUser(createUserDto);
+    signInUser(@Body() createUserDto: CreateUserDto) {
+        return this.authService.signIn(createUserDto);
     };
 
     @Post('login') // Login
-    loginUser(@Body() loginUserDto: LoginUserDto) {
-        return this.userService.loginUser(loginUserDto)
+    logInUser(@Body() loginUserDto: LoginUserDto) {
+        return this.authService.logIn(loginUserDto)
     }
 
 
