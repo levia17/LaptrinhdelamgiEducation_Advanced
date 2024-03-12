@@ -5,8 +5,10 @@ import { LoginUserDto } from 'src/dtos/users/LoginUser.dto';
 import { AuthService } from 'src/service/auth/auth.service';
 import { RolesGuard } from 'src/guard/roles.guard';
 import { Roles } from 'src/decorator/roles.decorator';
+import { ApiBearerAuth, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 
+@ApiTags('User')
 @Controller('users')
 export class UsersController {
     constructor(
@@ -20,8 +22,8 @@ export class UsersController {
     }
 
     @UseGuards(RolesGuard)
-    @Get() // Get all users
     @Roles('admin')
+    @Get() // Get all users
     getUsers() {
         return this.userService.getUsers()
     };
@@ -44,7 +46,7 @@ export class UsersController {
     };
 
     @Patch(':username') // Update one user
-    updateUser(@Param('username') username: string[], @Body() updatedDetails: {}) {
+    updateUser(@Param('username') username: string, @Body() updatedDetails: {}) {
         return this.userService.updateUser(username, updatedDetails);
     }
 

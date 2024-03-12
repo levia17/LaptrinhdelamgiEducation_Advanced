@@ -22,8 +22,9 @@ export class RolesGuard implements CanActivate {
 
             request.user = this.jwtService.verify(token, { secret: process.env.SECRET })
 
-            if (request.user.role !== requiredRole) {
-                return false;
+            if (!requiredRole.includes(request.user.role)) {
+
+                throw new UnauthorizedException('Not enough permission to do that!');
             }
 
         }

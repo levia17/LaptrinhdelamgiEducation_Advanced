@@ -28,7 +28,7 @@ export class UsersService {
     }
 
 
-    updateUser(username: string[], updatedDetails: {}) {
+    updateUser(username: string, updatedDetails: {}) {
         return this.userRepository.update(username, updatedDetails)
     }
 
